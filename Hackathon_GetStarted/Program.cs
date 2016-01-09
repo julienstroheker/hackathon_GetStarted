@@ -25,7 +25,8 @@ namespace Hackathon_GetStarted
             Console.WriteLine("################");
             Console.WriteLine("### Initiate connexion :");
             Connexion(lusername, lpassword, laccount);
-
+            Console.WriteLine("### Create new demo projet :");
+            CreateHackathonProject(lusername, lpassword, laccount, "HackathonDemo");
 
             Console.WriteLine("################");
             Console.WriteLine("END");
@@ -65,7 +66,7 @@ namespace Hackathon_GetStarted
                             {
                                 if (print)
                                 {
-                                    Console.WriteLine(reader.Value);
+                                    Console.WriteLine("- "+reader.Value);
                                     print = false;
                                 }
                                 if ((reader.TokenType.ToString() == "PropertyName") && (reader.Value.ToString() == "name"))
@@ -75,6 +76,70 @@ namespace Hackathon_GetStarted
                             }
                         }
                     }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+        }
+
+        public static async void CreateHackathonProject(string username, string password, string account, string projectHackathon)
+        {
+            try
+            {
+                bool needCreated = false;
+                using (HttpClient client = new HttpClient())
+                {
+                    //Hearder JSON
+                    client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+                    // Header Authentification
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic",
+                        Convert.ToBase64String(
+                            System.Text.ASCIIEncoding.ASCII.GetBytes(
+                                string.Format("{0}:{1}", username, password))));
+                    // Prepare the Request with the parameters
+                    string output = String.Format("https://{0}.visualstudio.com/DefaultCollection/_apis/projects/{1}?includeCapabilities=true&api-version=1.0", account, projectHackathon);
+                    // Request
+                    using (HttpResponseMessage response = client.GetAsync(output).Result)
+                    {
+                        response.EnsureSuccessStatusCode();
+                        // Connexion Success
+                        string responseBody = await response.Content.ReadAsStringAsync();
+                        JsonTextReader reader = new JsonTextReader(new StringReader(responseBody));
+                        // Trig only the parameter Name
+                        bool print = false;
+                        
+                        while (reader.Read())
+                        {
+                            if (reader.Value != null)
+                            {
+                                if (print)
+                                {
+                                    if (reader.Value.ToString()== "ProjectDoesNotExistWithNameException")
+                                    {
+                                        Console.WriteLine("- Projet doesn't exist");
+                                        print = false;
+                                        needCreated = true;
+                                    }
+                                }
+                                if ((reader.TokenType.ToString() == "PropertyName") && (reader.Value.ToString() == "typeKey"))
+                                {
+                                    print = true;
+                                }
+                            }
+                        }
+
+                    }
+                }
+                if (needCreated==true)
+                {
+
+
+                }
+                else
+                {
+                    Console.WriteLine("!! Project already there, please remove it or change the name");
                 }
             }
             catch (Exception ex)
