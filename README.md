@@ -6,7 +6,8 @@ Console application on C#.
 
 It interect with the Visual Studio Team Services API via REST (Http Client)
 
--Doing the following stuff for now :-
+Doing the following stuff for now :
+- 
 - Asking for credenttials (Basic Authentification)
 - Asking for VSTS Tenant
 - Getting the template ID (Agile, VS, etc...)
@@ -15,7 +16,8 @@ It interect with the Visual Studio Team Services API via REST (Http Client)
 - Adding some randoms content WIT in the Kanban
 
 
--IN progress-
+IN progress
+- 
 - Clean the dirty dirty code....
 - Comments
 - Add styles and color configuration on the board
