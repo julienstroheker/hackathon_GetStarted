@@ -18,58 +18,85 @@ namespace Hackathon_GetStarted
         static string lpassword;
         static string laccount;
         static Dictionary<string,string> templateProjectID = new Dictionary<string, string>();
-        static string newProjectName = "HackHackJack";
-        static string newTeamName = newProjectName + "%20Team";
+        static string newProjectName = "";
+        static string newTeamName = "";
 
         static void Main(string[] args)
         {
             
             // Need to add better management for the args
-            Console.WriteLine("################");
-            Console.WriteLine("--> Enter your Login :");
+            Console.WriteLine("###################################################");
+            Console.WriteLine("------> Enter your Login (Basic Authentification must be activated) :");
             lusername = Console.ReadLine();
-            Console.WriteLine("--> Password :");
+            Console.WriteLine("------> Password :");
             lpassword = Console.ReadLine();
-            Console.WriteLine("--> VSTS Tenant :");
+            Console.WriteLine("------> VSTS Tenant (https://XXXXXXXXXX.visualstudio.com) :");
             laccount = Console.ReadLine();
-            Console.WriteLine("################");
-            Console.WriteLine("### Initiate connexion :");
-
-            Connexion();
-            
+            Console.WriteLine("###################################################");
+            Console.WriteLine("------> Project name :");
+            newProjectName = Console.ReadLine();
+            newTeamName = newProjectName + "%20Team";
+            Console.WriteLine("###################################################");
+            Console.WriteLine("### Initiating connexion :");
+            Connexion().Wait();
             Console.WriteLine("### Get Template ID :");
             GetTemplateId();
-            /*
+            
             Console.WriteLine("### Create new demo projet :");
+            
             // Need to improve the selection of the template
             CreateHackathonProject("Agile");
-            //
+            Thread.Sleep(10000);
+            // Reconfiguring board with 3 columns TO DO DOING and DONE
             ConfigureBoard();
-            Console.WriteLine("### Assigned Tasks to :\n Use the correct type like this \"First Name <xxxx@outlook.com>\"\n Example : Julien Stroheker <julien.stroheker@outlook.com>");
-            string assignedTO = Console.ReadLine();
-            CreateUserStory("Welcome Guests", "Closed","Logistics","User Story", assignedTO);
+            Thread.Sleep(5000);
+            // Assign Tasks to someone ?
+            Console.WriteLine("------> Do you want to assign the tasks to someone ? Y/N");
+            string assignatedYorN = Console.ReadLine();
+            string assignedTO = null;
+            if (assignatedYorN.ToUpper()=="Y")
+            {
+                Console.WriteLine("### Assign Tasks to :\n Use the correct type like this \"First Name <xxxx@outlook.com>\"\n Example : Julien Stroheker <julien.stroheker@outlook.com>");
+                assignedTO = Console.ReadLine();
+            }
+           
+            CreateUserStory("Welcome Guests", "Closed", "Logistics", "User Story", assignedTO);
+            Thread.Sleep(1000);
             CreateUserStory("Demonstrate Kanban", "Active", "Demonstrations", "User Story", assignedTO);
+            Thread.Sleep(1000);
             CreateUserStory("Explain how the Hackathon will work ?", "Active", "Presentation", "User Story", assignedTO);
+            Thread.Sleep(1000);
             CreateUserStory("DevOps Overview", "Active", "Presentation", "User Story", assignedTO);
+            Thread.Sleep(1000);
             CreateUserStory("Demonstrate APM + Automated Recovery Parts Unlimited App", "New", "Demonstrations", "User Story", assignedTO);
+            Thread.Sleep(1000);
 
             CreateUserStory("Demonstrate Cloud Based Load Testing + Autoscale policies in IaC", "New", "Demonstrations", "User Story", assignedTO);
+            Thread.Sleep(1000);
             CreateUserStory("Demonstrate Infrastructure as Code with Azure Resource Manager Deployment Templates", "New", "Demonstrations", "User Story", assignedTO);
+            Thread.Sleep(1000);
             CreateUserStory("Demonstrate Continuous Deployment and Release Management with Visual Studio Team Services", "New", "Demonstrations", "User Story", assignedTO);
+            Thread.Sleep(1000);
             CreateUserStory("Demonstrate Continuous Integration with Visual Studio Team Services", "New", "Demonstrations", "User Story", assignedTO);
+            Thread.Sleep(1000);
 
             CreateUserStory("Let’s form our teams!", "New", "Let's Hack", "User Story", assignedTO);
+            Thread.Sleep(1000);
             CreateUserStory("Activate your Tools", "New", "Let's Hack", "User Story", assignedTO);
+            Thread.Sleep(1000);
+            Thread.Sleep(5000);
+            Console.WriteLine("###################################################");
 
-            Console.WriteLine("################");
-            */
+
             //BuildConf();
-            test();
+            //test();
             Console.WriteLine("END");
+            Console.WriteLine("###################################################");
+            Console.WriteLine("Type any key to close this window...");
             Console.ReadKey();
         }
 
-        public static async void Connexion()
+        public static async Task Connexion()
         {
             try
             {
@@ -106,6 +133,7 @@ namespace Hackathon_GetStarted
             {
                 Console.WriteLine(ex.ToString());
             }
+
         }
 
         public static async void GetTemplateId()
@@ -295,7 +323,7 @@ namespace Hackathon_GetStarted
 
         public static async void CreateUserStory(string _title, string _state, string _tag, string _witType, string _assignedTo)
         {
-            
+           
             //Create JSON File for you new Task
             BoardNewItemProperty title = new BoardNewItemProperty("add", "/fields/System.Title", _title);
 
@@ -311,7 +339,7 @@ namespace Hackathon_GetStarted
 
             BoardNewItemProperty tags = new BoardNewItemProperty("add", "/fields/System.Tags", _tag);
 
-            BoardNewItemProperty assignedTo = new BoardNewItemProperty("add", "/fields/System.AssignedTo", _assignedTo);
+            
 
             IList<BoardNewItemProperty> theItem = new List<BoardNewItemProperty>();
             theItem.Add(title);
@@ -321,8 +349,13 @@ namespace Hackathon_GetStarted
             theItem.Add(workItemType);
             theItem.Add(state);
             theItem.Add(tags);
-            theItem.Add(assignedTo);
 
+            if (_assignedTo != null)
+            {
+                BoardNewItemProperty assignedTo = new BoardNewItemProperty("add", "/fields/System.AssignedTo", _assignedTo);
+                theItem.Add(assignedTo);
+            }
+            
             JArray theItemArray = JArray.FromObject(theItem);
 
             try
