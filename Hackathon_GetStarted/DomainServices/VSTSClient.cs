@@ -17,6 +17,9 @@ namespace Hackathon_GetStarted.DomainServices
         public string Tenant { get; set; }
         public string ProjectName { get; set; }
 
+        public string _endpointTenantProjects { get { return String.Format("https://{0}.visualstudio.com/DefaultCollection/_apis/projects?api-version=1.0", Tenant); } }
+       
+
         private string _endpointGetProjects { get { return String.Format("https://{0}.visualstudio.com/DefaultCollection/_apis/projects/{1}?includeCapabilities=true&api-version=1.0", Tenant, ProjectName); } }
         public string _endpointCreateProject { get { return String.Format("https://{0}.visualstudio.com/DefaultCollection/_apis/projects?api-version=2.0-preview", Tenant); } }
         public string _endpointCreateWIT { get { return String.Format("https://{0}.visualstudio.com/DefaultCollection/{1}/_apis/wit/workitems/$User%20Story?api-version=1.0", Tenant, ProjectName); } }
@@ -98,14 +101,14 @@ namespace Hackathon_GetStarted.DomainServices
             {
                 bool needCreated = false;
                 // Request - Could be optimize with HEAD http request
-                using (HttpResponseMessage response =  _client.GetAsync(_endpointGetProjects).Result)
-                {
+
+                    HttpResponseMessage response = _client.GetAsync(_endpointGetProjects).Result;
                     if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
                     {
                         Console.WriteLine("- Projet doesn't exist");
                         needCreated = true;
                     }
-                }
+                
 
                 if (needCreated == true)
                 {
@@ -122,13 +125,31 @@ namespace Hackathon_GetStarted.DomainServices
                     // Prepare the Request with the parameters
                     // Request
                     var request = new StringContent(jsonRequest, System.Text.Encoding.UTF8, "application/json");
-                    using (HttpResponseMessage response = await _client.PostAsync(_endpointCreateProject, request))
-                        {
-                            response.EnsureSuccessStatusCode();
+
+                    HttpResponseMessage postResponse = await _client.PostAsync(_endpointCreateProject, request);
+                            postResponse.EnsureSuccessStatusCode();
                             // Connexion Success
-                            string responseBody = await response.Content.ReadAsStringAsync();
-                            Console.WriteLine("Creation of the project Queued");
-                        }                    
+                            dynamic responseBody = JsonConvert.DeserializeObject( postResponse.Content.ReadAsStringAsync().Result);
+
+
+                    var projectUrl = responseBody["url"];
+                    Console.WriteLine(String.Format("Creation of the project Queued: {0}", projectUrl));
+
+                   
+
+                    bool created = false;
+                    while (!created)
+                    {
+                        dynamic resultObj  = JsonConvert.DeserializeObject(_client.GetAsync((string)projectUrl).Result.Content.ReadAsStringAsync().Result);
+
+
+                        created = resultObj["status"] == "succeeded";
+                        Console.WriteLine(String.Format("Created: {0}", created));
+                        Thread.Sleep(5000);
+                    }
+                    
+
+                    
                 }
                 else
                 {
@@ -140,6 +161,8 @@ namespace Hackathon_GetStarted.DomainServices
                 Console.WriteLine(ex.ToString());
             }
         }
+
+
 
         public async void CreateUserStory(string title, string state, string tag, string witType, string assignedTo)
         {
@@ -195,6 +218,26 @@ namespace Hackathon_GetStarted.DomainServices
                 Console.WriteLine(ex);
             }
         }
+
+        public async Task<List<string>> GetTenantProjects()
+        {
+            var projects = new List<string>();
+            HttpResponseMessage response = _client.GetAsync(_endpointTenantProjects).Result;
+                response.EnsureSuccessStatusCode();
+                // Connexion Success
+                Console.WriteLine("## Connexion OK");
+                Console.WriteLine("## Projects already there : ");
+                string responseBody = await response.Content.ReadAsStringAsync();
+                // Parse JSON and print only the Project Name
+                JObject responseJSON = JObject.Parse(responseBody);
+                int nbProjects = (int)responseJSON["count"];
+                for (int i = 0; i < nbProjects; i++)
+                {
+                    projects.Add((string)responseJSON["value"][i]["name"]);
+                }
+            return projects;
+            }
+        
 
         public void Dispose()
         {
