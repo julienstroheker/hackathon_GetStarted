@@ -39,7 +39,7 @@ namespace Hackathon_GetStarted
             newTeamName = newProjectName + "%20Team";
             Console.WriteLine("###################################################");
             Console.WriteLine("### Initiating connexion :");
-            Connexion().Wait();
+            //Connexion().Wait();
             Console.WriteLine("### Get Template ID :");
             GetTemplateId();
             
@@ -48,62 +48,55 @@ namespace Hackathon_GetStarted
 
             using (var client = new VSTSClient(lusername, lpassword, laccount, newProjectName))
             {
-                client.CreateProject(newProjectName, "Agile").Wait();
-                Thread.Sleep(15000);
-                client.ConfigureBoard().Wait();
+                client.CreateHackathonProject(newProjectName, "Agile");
+                Thread.Sleep(10000);
+                ConfigureBoard();
+                Thread.Sleep(5000);
+                Console.WriteLine("------> Do you want to assign the tasks to someone ? Y/N");
+                string assignatedYorN = Console.ReadLine();
+                string assignedTO = null;
+                if (assignatedYorN.ToUpper() == "Y")
+                {
+                    Console.WriteLine("### Assign Tasks to :\n Use the correct type like this \"First Name <xxxx@outlook.com>\"\n Example : Julien Stroheker <julien.stroheker@outlook.com>");
+                    assignedTO = Console.ReadLine();
+                }
+                client.CreateUserStory("Welcome Guests", "Closed", "Logistics", "User Story", assignedTO);
+                Thread.Sleep(1000);
+                client.CreateUserStory("Demonstrate Kanban", "Active", "Demonstrations", "User Story", assignedTO);
+                Thread.Sleep(1000);
+                client.CreateUserStory("Explain how the Hackathon will work ?", "Active", "Presentation", "User Story", assignedTO);
+                Thread.Sleep(1000);
+                client.CreateUserStory("DevOps Overview", "Active", "Presentation", "User Story", assignedTO);
+                Thread.Sleep(1000);
+                client.CreateUserStory("Demonstrate APM + Automated Recovery Parts Unlimited App", "New", "Demonstrations", "User Story", assignedTO);
+                Thread.Sleep(1000);
+
+                client.CreateUserStory("Demonstrate Cloud Based Load Testing + Autoscale policies in IaC", "New", "Demonstrations", "User Story", assignedTO);
+                Thread.Sleep(1000);
+                client.CreateUserStory("Demonstrate Infrastructure as Code with Azure Resource Manager Deployment Templates", "New", "Demonstrations", "User Story", assignedTO);
+                Thread.Sleep(1000);
+                client.CreateUserStory("Demonstrate Continuous Deployment and Release Management with Visual Studio Team Services", "New", "Demonstrations", "User Story", assignedTO);
+                Thread.Sleep(1000);
+                client.CreateUserStory("Demonstrate Continuous Integration with Visual Studio Team Services", "New", "Demonstrations", "User Story", assignedTO);
+                Thread.Sleep(1000);
+
+                client.CreateUserStory("Let’s form our teams!", "New", "Let's Hack", "User Story", assignedTO);
+                Thread.Sleep(1000);
+                client.CreateUserStory("Activate your Tools", "New", "Let's Hack", "User Story", assignedTO);
+                Thread.Sleep(1000);
+                Thread.Sleep(5000);
+                Console.WriteLine("###################################################");
+
+
+                //BuildConf();
+                //test();
+                Console.WriteLine("END");
+                Console.WriteLine("###################################################");
+                Console.WriteLine("Type any key to close this window...");
+                Console.ReadKey();
             }
-            // Need to improve the selection of the template
-           // CreateHackathonProject("Agile");
-           
-            // Reconfiguring board with 3 columns TO DO DOING and DONE
-           // ConfigureBoard();
-           // Thread.Sleep(5000);
-            // Assign Tasks to someone ?
-            Console.WriteLine("------> Do you want to assign the tasks to someone ? Y/N");
-            string assignatedYorN = Console.ReadLine();
-            string assignedTO = null;
-            if (assignatedYorN.ToUpper()=="Y")
-            {
-                Console.WriteLine("### Assign Tasks to :\n Use the correct type like this \"First Name <xxxx@outlook.com>\"\n Example : Julien Stroheker <julien.stroheker@outlook.com>");
-                assignedTO = Console.ReadLine();
-            }
-           
-            CreateUserStory("Welcome Guests", "Closed", "Logistics", "User Story", assignedTO);
-            Thread.Sleep(1000);
-            CreateUserStory("Demonstrate Kanban", "Active", "Demonstrations", "User Story", assignedTO);
-            Thread.Sleep(1000);
-            CreateUserStory("Explain how the Hackathon will work ?", "Active", "Presentation", "User Story", assignedTO);
-            Thread.Sleep(1000);
-            CreateUserStory("DevOps Overview", "Active", "Presentation", "User Story", assignedTO);
-            Thread.Sleep(1000);
-            CreateUserStory("Demonstrate APM + Automated Recovery Parts Unlimited App", "New", "Demonstrations", "User Story", assignedTO);
-            Thread.Sleep(1000);
-
-            CreateUserStory("Demonstrate Cloud Based Load Testing + Autoscale policies in IaC", "New", "Demonstrations", "User Story", assignedTO);
-            Thread.Sleep(1000);
-            CreateUserStory("Demonstrate Infrastructure as Code with Azure Resource Manager Deployment Templates", "New", "Demonstrations", "User Story", assignedTO);
-            Thread.Sleep(1000);
-            CreateUserStory("Demonstrate Continuous Deployment and Release Management with Visual Studio Team Services", "New", "Demonstrations", "User Story", assignedTO);
-            Thread.Sleep(1000);
-            CreateUserStory("Demonstrate Continuous Integration with Visual Studio Team Services", "New", "Demonstrations", "User Story", assignedTO);
-            Thread.Sleep(1000);
-
-            CreateUserStory("Let’s form our teams!", "New", "Let's Hack", "User Story", assignedTO);
-            Thread.Sleep(1000);
-            CreateUserStory("Activate your Tools", "New", "Let's Hack", "User Story", assignedTO);
-            Thread.Sleep(1000);
-            Thread.Sleep(5000);
-            Console.WriteLine("###################################################");
-
-
-            //BuildConf();
-            //test();
-            Console.WriteLine("END");
-            Console.WriteLine("###################################################");
-            Console.WriteLine("Type any key to close this window...");
-            Console.ReadKey();
         }
-
+        /*
         public static async Task Connexion()
         {
             try
@@ -143,7 +136,7 @@ namespace Hackathon_GetStarted
             }
 
         }
-
+        */
         public static async void GetTemplateId()
         {
             try
@@ -181,7 +174,7 @@ namespace Hackathon_GetStarted
                 Console.WriteLine(ex.ToString());
             }
         }
-
+        /*
         public static async void createHackathonProject(string typeProject)
         {
             try
@@ -256,8 +249,8 @@ namespace Hackathon_GetStarted
                 Console.WriteLine(ex.ToString());
             }
         }
-
-        public static async void configureBoard()
+        */
+        public static async void ConfigureBoard()
         {
             Thread.Sleep(5000);
             try
@@ -330,8 +323,8 @@ namespace Hackathon_GetStarted
         {
             
         }
-
-        public static async void CreateUserStory(string _title, string _state, string _tag, string _witType, string _assignedTo)
+        /*
+        public static async void createUserStory(string _title, string _state, string _tag, string _witType, string _assignedTo)
         {
            
             //Create JSON File for you new Task
@@ -400,7 +393,7 @@ namespace Hackathon_GetStarted
             }
 
         }
-
+        */
         public static void BuildConf()
         {
             List<BoardStyleFill> fills = new List<BoardStyleFill>();
