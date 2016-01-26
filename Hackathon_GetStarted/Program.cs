@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using System.IO;
 using Newtonsoft.Json.Linq;
 using System.Threading;
+using Hackathon_GetStarted.DomainServices;
 
 namespace Hackathon_GetStarted
 {
@@ -43,10 +44,16 @@ namespace Hackathon_GetStarted
             GetTemplateId();
             
             Console.WriteLine("### Create new demo projet :");
-            
+
+
+            using (var client = new VSTSClient(lusername, lpassword, laccount, newProjectName))
+            {
+                client.CreateHackathonProject(newProjectName, "Agile");
+                Thread.Sleep(10000);
+            }
             // Need to improve the selection of the template
-            CreateHackathonProject("Agile");
-            Thread.Sleep(10000);
+           // CreateHackathonProject("Agile");
+           
             // Reconfiguring board with 3 columns TO DO DOING and DONE
             ConfigureBoard();
             Thread.Sleep(5000);
@@ -174,13 +181,15 @@ namespace Hackathon_GetStarted
             }
         }
 
-        public static async void CreateHackathonProject(string typeProject)
+        public static async void createHackathonProject(string typeProject)
         {
             try
             {
                 bool needCreated = false;
+                
                 using (HttpClient client = new HttpClient())
                 {
+                    
                     //Hearder JSON
                     client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
                     // Header Authentification

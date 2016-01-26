@@ -47,9 +47,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BoardNewItem.cs" />
-    <Compile Include="BoardStyleRules.cs" />
-    <Compile Include="HttpClientExtensions.cs" />
+    <Compile Include="DomainModels\BoardNewItem.cs" />
+    <Compile Include="DomainModels\BoardStyleRules.cs" />
+    <Compile Include="DomainServices\VSTSClient.cs" />
+    <Compile Include="Extensions\HttpClientExtensions.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

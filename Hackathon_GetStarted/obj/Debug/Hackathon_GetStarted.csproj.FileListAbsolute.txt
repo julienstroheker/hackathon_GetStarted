@@ -6,3 +6,11 @@ c:\users\juliens\documents\visual studio 2015\Projects\Hackathon_GetStarted\Hack
 c:\users\juliens\documents\visual studio 2015\Projects\Hackathon_GetStarted\Hackathon_GetStarted\obj\Debug\Hackathon_GetStarted.pdb
 c:\users\juliens\documents\visual studio 2015\Projects\Hackathon_GetStarted\Hackathon_GetStarted\bin\Debug\Newtonsoft.Json.dll
 c:\users\juliens\documents\visual studio 2015\Projects\Hackathon_GetStarted\Hackathon_GetStarted\bin\Debug\Newtonsoft.Json.xml
+C:\Users\renau_000\Documents\Projects\ju-projects\hackathon_GetStarted\Hackathon_GetStarted\bin\Debug\Hackathon_GetStarted.exe.config
+C:\Users\renau_000\Documents\Projects\ju-projects\hackathon_GetStarted\Hackathon_GetStarted\obj\Debug\Hackathon_GetStarted.exe
+C:\Users\renau_000\Documents\Projects\ju-projects\hackathon_GetStarted\Hackathon_GetStarted\obj\Debug\Hackathon_GetStarted.pdb
+C:\Users\renau_000\Documents\Projects\ju-projects\hackathon_GetStarted\Hackathon_GetStarted\bin\Debug\Hackathon_GetStarted.exe
+C:\Users\renau_000\Documents\Projects\ju-projects\hackathon_GetStarted\Hackathon_GetStarted\bin\Debug\Hackathon_GetStarted.pdb
+C:\Users\renau_000\Documents\Projects\ju-projects\hackathon_GetStarted\Hackathon_GetStarted\bin\Debug\Newtonsoft.Json.dll
+C:\Users\renau_000\Documents\Projects\ju-projects\hackathon_GetStarted\Hackathon_GetStarted\bin\Debug\Newtonsoft.Json.xml
+C:\Users\renau_000\Documents\Projects\ju-projects\hackathon_GetStarted\Hackathon_GetStarted\obj\Debug\Hackathon_GetStarted.csprojResolveAssemblyReference.cache
