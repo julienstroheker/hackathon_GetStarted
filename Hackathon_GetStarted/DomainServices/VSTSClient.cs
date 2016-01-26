@@ -24,6 +24,7 @@ namespace Hackathon_GetStarted.DomainServices
         public string _endpointCreateProject { get { return String.Format("https://{0}.visualstudio.com/DefaultCollection/_apis/projects?api-version=2.0-preview", Tenant); } }
         public string _endpointCreateWIT { get { return String.Format("https://{0}.visualstudio.com/DefaultCollection/{1}/_apis/wit/workitems/$User%20Story?api-version=1.0", Tenant, ProjectName); } }
         private string _endpointBoardColumns { get { return String.Format("https://{0}.visualstudio.com/DefaultCollection/{1}/{1}%20Team/_apis/work/boards/Stories/columns?api-version=2.0-preview", Tenant, ProjectName); } }
+        private string _endpointPushStyleConf { get { return String.Format("https://{0}.visualstudio.com/DefaultCollection/{1}/_apis/work/boards/Stories/cardrulesettings?api-version=2.0-preview.1", Tenant, ProjectName); } }
 
         public VSTSClient(string username,string password, string tenant, string projectName)
         {
@@ -78,7 +79,7 @@ namespace Hackathon_GetStarted.DomainServices
                     HttpResponseMessage responsePut = await _client.PutAsync(_endpointBoardColumns, request);
                     if (responsePut.StatusCode == System.Net.HttpStatusCode.OK)
                     {
-                        Console.WriteLine("- Colums modified");
+                        Console.WriteLine("- Columns modified");
                     }
 
                 }
@@ -237,7 +238,94 @@ namespace Hackathon_GetStarted.DomainServices
                 }
             return projects;
             }
-        
+
+        private JObject BuildStyleConf()
+        {
+            List<BoardStyleFill> fills = new List<BoardStyleFill>();
+
+            BoardStyleFillSettings fillSettingsPresentation = new BoardStyleFillSettings("#F5EEF8", "#000000");
+            BoardStyleFillClauses fillClausesPresentation = new BoardStyleFillClauses("System.Tags", 1, "", "CONTAINS", "Presentation");
+            List<BoardStyleFillClauses> fillClausesSPresentation = new List<BoardStyleFillClauses>();
+            fillClausesSPresentation.Add(fillClausesPresentation);
+            BoardStyleFill fillPresentation = new BoardStyleFill("Presentation", "True", "[System.Tags] contains 'Presentation'", fillClausesSPresentation, fillSettingsPresentation);
+            fills.Add(fillPresentation);
+
+            BoardStyleFillSettings fillSettingsLogistics = new BoardStyleFillSettings("#EAFFFF", "#000000");
+            BoardStyleFillClauses fillClausesLogistics = new BoardStyleFillClauses("System.Tags", 1, "", "CONTAINS", "Logistics");
+            List<BoardStyleFillClauses> fillClausesSLogistics = new List<BoardStyleFillClauses>();
+            fillClausesSLogistics.Add(fillClausesLogistics);
+            BoardStyleFill fillLogistics = new BoardStyleFill("Logistics", "True", "[System.Tags] contains 'Logistics'", fillClausesSLogistics, fillSettingsLogistics);
+            fills.Add(fillLogistics);
+
+            BoardStyleFillSettings fillSettingsLetsHack = new BoardStyleFillSettings("#FFFAE5", "#000000");
+            BoardStyleFillClauses fillClausesLetsHack = new BoardStyleFillClauses("System.Tags", 1, "", "CONTAINS", "Let");
+            List<BoardStyleFillClauses> fillClausesSLetsHack = new List<BoardStyleFillClauses>();
+            fillClausesSLetsHack.Add(fillClausesLetsHack);
+            BoardStyleFill fillLetsHack = new BoardStyleFill("Lets Hack", "True", "[System.Tags] contains 'Let'", fillClausesSLetsHack, fillSettingsLetsHack);
+            fills.Add(fillLetsHack);
+
+            BoardStyleFillSettings fillSettingsDemo = new BoardStyleFillSettings("#EFFFDC", "#000000");
+            BoardStyleFillClauses fillClausesDemo = new BoardStyleFillClauses("System.Tags", 1, "", "CONTAINS", "Demonstrations");
+            List<BoardStyleFillClauses> fillClausesSDemo = new List<BoardStyleFillClauses>();
+            fillClausesSDemo.Add(fillClausesDemo);
+            BoardStyleFill fillDemo = new BoardStyleFill("Demo", "True", "[System.Tags] contains 'Demonstrations'", fillClausesSDemo, fillSettingsDemo);
+            fills.Add(fillDemo);
+
+
+            List<BoardStyleTagStyle> tagsStyle = new List<BoardStyleTagStyle>();
+
+            BoardStyleTagStyleSettings tagStyleSettingsPresentation = new BoardStyleTagStyleSettings("#00564B", "#FFFFFF");
+            BoardStyleTagStyle tagStylePresentation = new BoardStyleTagStyle("Presentation", "True", tagStyleSettingsPresentation);
+            tagsStyle.Add(tagStylePresentation);
+
+            BoardStyleTagStyleSettings tagStyleSettingsLogistics = new BoardStyleTagStyleSettings("#2CBDD9", "#000000");
+            BoardStyleTagStyle tagStyleLogistics = new BoardStyleTagStyle("Logistics", "True", tagStyleSettingsLogistics);
+            tagsStyle.Add(tagStyleLogistics);
+
+            BoardStyleTagStyleSettings tagStyleSettingsLetsHack = new BoardStyleTagStyleSettings("#FBFD52", "#000000");
+            BoardStyleTagStyle tagStyleLetsHack = new BoardStyleTagStyle("Let's Hack", "True", tagStyleSettingsLetsHack);
+            tagsStyle.Add(tagStyleLetsHack);
+
+            BoardStyleTagStyleSettings tagStyleSettingsDemonstrations = new BoardStyleTagStyleSettings("#7ACE64", "#000000");
+            BoardStyleTagStyle tagStyleDemonstrations = new BoardStyleTagStyle("Demonstrations", "True", tagStyleSettingsDemonstrations);
+            tagsStyle.Add(tagStyleDemonstrations);
+
+
+            BoardStyleRules confHackathon = new BoardStyleRules(fills, tagsStyle);
+
+
+
+            JObject o = JObject.FromObject(confHackathon);
+
+            return o;
+        }
+
+        public async void PushStyleConf()
+        {
+
+            try
+            {                    
+                HttpResponseMessage response = _client.GetAsync(_endpointPushStyleConf).Result;
+                    
+                response.EnsureSuccessStatusCode();
+                // Connexion Success
+                Console.WriteLine("## Applying style on the board : ");
+                string responseBody = await response.Content.ReadAsStringAsync();
+                // Trig only the parameter Name
+                JObject configJSON = JObject.Parse(responseBody);
+                dynamic toPost = JsonConvert.DeserializeObject(responseBody);
+                toPost["rules"] = BuildStyleConf();
+                var content = (JsonConvert.SerializeObject(toPost));
+                var request = new StringContent(content, System.Text.Encoding.UTF8, "application/json");
+                Console.WriteLine(content);
+                await _client.PatchAsync(_endpointPushStyleConf, request);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
+        }
 
         public void Dispose()
         {
