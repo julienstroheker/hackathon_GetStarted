@@ -48,15 +48,16 @@ namespace Hackathon_GetStarted
 
             using (var client = new VSTSClient(lusername, lpassword, laccount, newProjectName))
             {
-                client.CreateHackathonProject(newProjectName, "Agile");
-                Thread.Sleep(10000);
+                client.CreateProject(newProjectName, "Agile").Wait();
+                Thread.Sleep(15000);
+                client.ConfigureBoard().Wait();
             }
             // Need to improve the selection of the template
            // CreateHackathonProject("Agile");
            
             // Reconfiguring board with 3 columns TO DO DOING and DONE
-            ConfigureBoard();
-            Thread.Sleep(5000);
+           // ConfigureBoard();
+           // Thread.Sleep(5000);
             // Assign Tasks to someone ?
             Console.WriteLine("------> Do you want to assign the tasks to someone ? Y/N");
             string assignatedYorN = Console.ReadLine();
@@ -256,7 +257,7 @@ namespace Hackathon_GetStarted
             }
         }
 
-        public static async void ConfigureBoard()
+        public static async void configureBoard()
         {
             Thread.Sleep(5000);
             try
