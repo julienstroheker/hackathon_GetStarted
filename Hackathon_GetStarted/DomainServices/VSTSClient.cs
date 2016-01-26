@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Hackathon_GetStarted.DomainServices
@@ -17,7 +18,8 @@ namespace Hackathon_GetStarted.DomainServices
         public string ProjectName { get; set; }
 
         private string _endpointGetProjects { get { return String.Format("https://{0}.visualstudio.com/DefaultCollection/_apis/projects/{1}?includeCapabilities=true&api-version=1.0", Tenant, ProjectName); } }
-        public string _endpointCreateProject { get{return String.Format("https://{0}.visualstudio.com/DefaultCollection/_apis/projects?api-version=2.0-preview", Tenant);}}
+        public string _endpointCreateProject { get { return String.Format("https://{0}.visualstudio.com/DefaultCollection/_apis/projects?api-version=2.0-preview", Tenant); } }
+        public string _endpointCreateWIT { get { return String.Format("https://{0}.visualstudio.com/DefaultCollection/{1}/_apis/wit/workitems/$User%20Story?api-version=1.0", Tenant, ProjectName); } }
         public VSTSClient(string username,string password, string tenant, string projectName)
         {
             Tenant = tenant;
@@ -78,6 +80,61 @@ namespace Hackathon_GetStarted.DomainServices
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
+            }
+        }
+
+        public async void CreateUserStory(string title, string state, string tag, string witType, string assignedTo)
+        {
+
+            //Create JSON File for you new Task
+            BoardNewItemProperty itemTitle = new BoardNewItemProperty("add", "/fields/System.Title", title);
+
+            BoardNewItemProperty itemAreaPath = new BoardNewItemProperty("add", "/fields/System.AreaPath", ProjectName);
+
+            BoardNewItemProperty itemTeamProject = new BoardNewItemProperty("add", "/fields/System.TeamProject", ProjectName);
+
+            BoardNewItemProperty itemIterationPath = new BoardNewItemProperty("add", "/fields/System.IterationPath", ProjectName);
+
+            BoardNewItemProperty itemWorkItemType = new BoardNewItemProperty("add", "/fields/System.WorkItemType", witType);
+
+            BoardNewItemProperty itemState = new BoardNewItemProperty("add", "/fields/System.State", state);
+
+            BoardNewItemProperty itemTags = new BoardNewItemProperty("add", "/fields/System.Tags", tag);
+
+            IList<BoardNewItemProperty> theItem = new List<BoardNewItemProperty>();
+            theItem.Add(itemTitle);
+            theItem.Add(itemAreaPath);
+            theItem.Add(itemTeamProject);
+            theItem.Add(itemIterationPath);
+            theItem.Add(itemWorkItemType);
+            theItem.Add(itemState);
+            theItem.Add(itemTags);
+
+            if (assignedTo != null)
+            {
+                BoardNewItemProperty itemAssignedTo = new BoardNewItemProperty("add", "/fields/System.AssignedTo", assignedTo);
+                theItem.Add(itemAssignedTo);
+            }
+
+            JArray theItemArray = JArray.FromObject(theItem);
+
+            try
+            {
+                //Hearder JSON
+                _client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json-patch+json"));
+                // Request
+                var requestWIT = JsonConvert.SerializeObject(theItemArray);
+                var request = new StringContent(requestWIT, System.Text.Encoding.UTF8, "application/json-patch+json");
+                HttpResponseMessage resp = await _client.PatchAsync(_endpointCreateWIT, request);
+                if (resp.StatusCode == System.Net.HttpStatusCode.OK)
+                {
+                    Console.WriteLine("- Task {0} Created", title);
+                    Thread.Sleep(500);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
             }
         }
 
