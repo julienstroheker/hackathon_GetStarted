@@ -317,7 +317,6 @@ namespace Hackathon_GetStarted.DomainServices
                 toPost["rules"] = BuildStyleConf();
                 var content = (JsonConvert.SerializeObject(toPost));
                 var request = new StringContent(content, System.Text.Encoding.UTF8, "application/json");
-                Console.WriteLine(content);
                 await _client.PatchAsync(_endpointPushStyleConf, request);
             }
             catch (Exception ex)
