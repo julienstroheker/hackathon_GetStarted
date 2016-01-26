@@ -48,9 +48,9 @@ namespace Hackathon_GetStarted
 
             using (var client = new VSTSClient(lusername, lpassword, laccount, newProjectName))
             {
-                client.CreateHackathonProject(newProjectName, "Agile");
+                client.CreateProject(newProjectName, "Agile").Wait();
                 Thread.Sleep(10000);
-                ConfigureBoard();
+                client.ConfigureBoard().Wait();
                 Thread.Sleep(5000);
                 Console.WriteLine("------> Do you want to assign the tasks to someone ? Y/N");
                 string assignatedYorN = Console.ReadLine();
