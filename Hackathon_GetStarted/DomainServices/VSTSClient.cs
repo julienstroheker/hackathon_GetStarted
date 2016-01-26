@@ -79,7 +79,7 @@ namespace Hackathon_GetStarted.DomainServices
                     HttpResponseMessage responsePut = await _client.PutAsync(_endpointBoardColumns, request);
                     if (responsePut.StatusCode == System.Net.HttpStatusCode.OK)
                     {
-                        Console.WriteLine("- Colums modified");
+                        Console.WriteLine("- Columns modified");
                     }
 
                 }
@@ -304,24 +304,21 @@ namespace Hackathon_GetStarted.DomainServices
         {
 
             try
-            {
-                
-                    string output = String.Format("https://{0}.visualstudio.com/DefaultCollection/{1}/_apis/work/boards/Stories/cardrulesettings?api-version=2.0-preview.1", laccount, newProjectName);
-                    // Request
-                    HttpResponseMessage response = _client.GetAsync(_endpointPushStyleConf).Result
+            {                    
+                HttpResponseMessage response = _client.GetAsync(_endpointPushStyleConf).Result;
                     
-                    response.EnsureSuccessStatusCode();
-                    // Connexion Success
-                    Console.WriteLine("## Applying style on the board : ");
-                    string responseBody = await response.Content.ReadAsStringAsync();
-                    // Trig only the parameter Name
-                    JObject configJSON = JObject.Parse(responseBody);
-                    dynamic toPost = JsonConvert.DeserializeObject(responseBody);
-                    toPost["rules"] = BuildStyleConf();
-                    var content = (JsonConvert.SerializeObject(toPost));
-                    var request = new StringContent(content, System.Text.Encoding.UTF8, "application/json");
-                    Console.WriteLine(content);
-                    await _client.PatchAsync(output, request);
+                response.EnsureSuccessStatusCode();
+                // Connexion Success
+                Console.WriteLine("## Applying style on the board : ");
+                string responseBody = await response.Content.ReadAsStringAsync();
+                // Trig only the parameter Name
+                JObject configJSON = JObject.Parse(responseBody);
+                dynamic toPost = JsonConvert.DeserializeObject(responseBody);
+                toPost["rules"] = BuildStyleConf();
+                var content = (JsonConvert.SerializeObject(toPost));
+                var request = new StringContent(content, System.Text.Encoding.UTF8, "application/json");
+                Console.WriteLine(content);
+                await _client.PatchAsync(_endpointPushStyleConf, request);
             }
             catch (Exception ex)
             {
