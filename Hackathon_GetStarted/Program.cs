@@ -40,7 +40,6 @@ namespace Hackathon_GetStarted
             Console.WriteLine("###################################################");
             Console.WriteLine("### Initiating connexion :");
             Console.WriteLine("### Get Template ID :");
-            GetTemplateId();
             
             Console.WriteLine("### Create new demo projet :");
 
@@ -90,7 +89,7 @@ namespace Hackathon_GetStarted
                             client.CreateUserStory("Activate your Tools", "New", "Let's Hack", "User Story", assignedTO);
                             Thread.Sleep(1000);
                             Thread.Sleep(5000);
-                            test();
+                            client.PushStyleConf();
                             Console.WriteLine("###################################################");
 
 
@@ -143,112 +142,7 @@ namespace Hackathon_GetStarted
             }
         }
  
-        public static async void AddStyle()
-        {
-            
-        }
-        public static JObject BuildConf()
-        {
-            List<BoardStyleFill> fills = new List<BoardStyleFill>();
-
-            BoardStyleFillSettings fillSettingsPresentation = new BoardStyleFillSettings("#F5EEF8", "#000000");
-            BoardStyleFillClauses fillClausesPresentation = new BoardStyleFillClauses("System.Tags", 1, "", "CONTAINS", "Presentation");
-            List<BoardStyleFillClauses> fillClausesSPresentation = new List<BoardStyleFillClauses>();
-            fillClausesSPresentation.Add(fillClausesPresentation);
-            BoardStyleFill fillPresentation = new BoardStyleFill("Presentation", "True", "[System.Tags] contains 'Presentation'", fillClausesSPresentation, fillSettingsPresentation);
-            fills.Add(fillPresentation);
-
-            BoardStyleFillSettings fillSettingsLogistics = new BoardStyleFillSettings("#EAFFFF", "#000000");
-            BoardStyleFillClauses fillClausesLogistics = new BoardStyleFillClauses("System.Tags", 1, "", "CONTAINS", "Logistics");
-            List<BoardStyleFillClauses> fillClausesSLogistics = new List<BoardStyleFillClauses>();
-            fillClausesSLogistics.Add(fillClausesLogistics);
-            BoardStyleFill fillLogistics = new BoardStyleFill("Logistics", "True", "[System.Tags] contains 'Logistics'", fillClausesSLogistics, fillSettingsLogistics);
-            fills.Add(fillLogistics);
-
-            BoardStyleFillSettings fillSettingsLetsHack = new BoardStyleFillSettings("#FFFAE5", "#000000");
-            BoardStyleFillClauses fillClausesLetsHack = new BoardStyleFillClauses("System.Tags", 1, "", "CONTAINS", "Let");
-            List<BoardStyleFillClauses> fillClausesSLetsHack = new List<BoardStyleFillClauses>();
-            fillClausesSLetsHack.Add(fillClausesLetsHack);
-            BoardStyleFill fillLetsHack = new BoardStyleFill("Lets Hack", "True", "[System.Tags] contains 'Let'", fillClausesSLetsHack, fillSettingsLetsHack);
-            fills.Add(fillLetsHack);
-
-            BoardStyleFillSettings fillSettingsDemo = new BoardStyleFillSettings("#EFFFDC", "#000000");
-            BoardStyleFillClauses fillClausesDemo = new BoardStyleFillClauses("System.Tags", 1, "", "CONTAINS", "Demonstrations");
-            List<BoardStyleFillClauses> fillClausesSDemo = new List<BoardStyleFillClauses>();
-            fillClausesSDemo.Add(fillClausesDemo);
-            BoardStyleFill fillDemo = new BoardStyleFill("Demo", "True", "[System.Tags] contains 'Demonstrations'", fillClausesSDemo, fillSettingsDemo);
-            fills.Add(fillDemo);
-
-
-            List<BoardStyleTagStyle> tagsStyle = new List<BoardStyleTagStyle>();
-
-            BoardStyleTagStyleSettings tagStyleSettingsPresentation = new BoardStyleTagStyleSettings("#00564B", "#FFFFFF");
-            BoardStyleTagStyle tagStylePresentation = new BoardStyleTagStyle("Presentation", "True", tagStyleSettingsPresentation);
-            tagsStyle.Add(tagStylePresentation);
-
-            BoardStyleTagStyleSettings tagStyleSettingsLogistics = new BoardStyleTagStyleSettings("#2CBDD9", "#000000");
-            BoardStyleTagStyle tagStyleLogistics = new BoardStyleTagStyle("Logistics", "True", tagStyleSettingsLogistics);
-            tagsStyle.Add(tagStyleLogistics);
-
-            BoardStyleTagStyleSettings tagStyleSettingsLetsHack = new BoardStyleTagStyleSettings("#FBFD52", "#000000");
-            BoardStyleTagStyle tagStyleLetsHack = new BoardStyleTagStyle("Let's Hack", "True", tagStyleSettingsLetsHack);
-            tagsStyle.Add(tagStyleLetsHack);
-
-            BoardStyleTagStyleSettings tagStyleSettingsDemonstrations = new BoardStyleTagStyleSettings("#7ACE64", "#000000");
-            BoardStyleTagStyle tagStyleDemonstrations = new BoardStyleTagStyle("Demonstrations", "True", tagStyleSettingsDemonstrations);
-            tagsStyle.Add(tagStyleDemonstrations);
-
-
-            BoardStyleRules confHackathon = new BoardStyleRules(fills, tagsStyle);
-
-            
-
-            JObject o = JObject.FromObject(confHackathon);
-
-            return o;
-        }
-
-        public static async void test()
-        {
-
-            try
-            {
-                using (HttpClient client = new HttpClient())
-                {
-                    //Hearder JSON
-                    client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-                    // Header Authentification
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic",
-                        Convert.ToBase64String(
-                            System.Text.ASCIIEncoding.ASCII.GetBytes(
-                                string.Format("{0}:{1}", lusername, lpassword))));
-                    // Prepare the Request with the parameters
-                    string output = String.Format("https://{0}.visualstudio.com/DefaultCollection/{1}/_apis/work/boards/Stories/cardrulesettings?api-version=2.0-preview.1", laccount, newProjectName);
-                    // Request
-                    using (HttpResponseMessage response = client.GetAsync(output).Result)
-                    {
-                        response.EnsureSuccessStatusCode();
-                        // Connexion Success
-                        Console.WriteLine("## Getting configuration ");
-                        string responseBody = await response.Content.ReadAsStringAsync();
-                        // Trig only the parameter Name
-                        JObject configJSON = JObject.Parse(responseBody);
-                        dynamic toPost = JsonConvert.DeserializeObject(responseBody);
-                        toPost["rules"] = BuildConf();
-                        var content = (JsonConvert.SerializeObject(toPost));
-                        var request = new StringContent(content, System.Text.Encoding.UTF8, "application/json");
-                        Console.WriteLine(content);
-                        await client.PatchAsync(output, request);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-
-        }
-
+       
 
 
     }
