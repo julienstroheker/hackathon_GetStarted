@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,11 +10,11 @@ namespace Hackathon_GetStarted
     class BoardStyleFillClauses
     {
         public string fieldName { get; set; }
-        public string index { get; set; }
+        public int index { get; set; }
         public string logicalOperator { get; set; }
         public string @operator { get; set; }
         public string value { get; set; }
-        public BoardStyleFillClauses(string _fieldName, string _index, string _logicalOperator, string _operator_, string _value)
+        public BoardStyleFillClauses(string _fieldName, int _index, string _logicalOperator, string _operator_, string _value)
         {
             this.fieldName = _fieldName;
             this.index = _index;
@@ -24,7 +25,9 @@ namespace Hackathon_GetStarted
     }
     class BoardStyleFillSettings
     {
+        [JsonProperty(PropertyName = "background-color")]
         public string backgroundcolor { get; set; }
+        [JsonProperty(PropertyName = "title-color")]
         public string titlecolor { get; set; }
         public BoardStyleFillSettings(string _backgroundcolor, string _titlecolor)
         {
@@ -50,6 +53,7 @@ namespace Hackathon_GetStarted
     }
     class BoardStyleTagStyleSettings
     {
+        [JsonProperty(PropertyName = "background-color")]
         public string backgroundcolor { get; set; }
         public string color { get; set; }
         public BoardStyleTagStyleSettings(string _backgroundcolor, string _color)
