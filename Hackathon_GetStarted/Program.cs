@@ -43,65 +43,71 @@ namespace Hackathon_GetStarted
             
             Console.WriteLine("### Create new demo projet :");
 
-
-            using (var client = new VSTSClient(lusername, lpassword, laccount, newProjectName))
+            try
             {
-                var projects = client.GetTenantProjects().Result;
-                foreach (var project in projects)
+                using (var client = new VSTSClient(lusername, lpassword, laccount, newProjectName))
                 {
-                    Console.WriteLine(project);
-                }               
-                client.CreateProject(newProjectName, "Agile")
-                        .ContinueWith(_ => {
-                            client.ConfigureBoard().Wait();
+                    var projects = client.GetTenantProjects().Result;
+                    foreach (var project in projects)
+                    {
+                        Console.WriteLine(project);
+                    }               
+                    client.CreateProject(newProjectName, "Agile")
+                            .ContinueWith(_ => {
+                                client.ConfigureBoard().Wait();
 
-                            Thread.Sleep(5000);
-                            Console.WriteLine("------> Do you want to assign the tasks to someone ? Y/N");
-                            string assignatedYorN = Console.ReadLine();
-                            string assignedTO = null;
-                            if (assignatedYorN.ToUpper() == "Y")
-                            {
-                                Console.WriteLine("### Assign Tasks to :\n Use the correct type like this \"First Name <xxxx@outlook.com>\"\n Example : Julien Stroheker <julien.stroheker@outlook.com>");
-                                assignedTO = Console.ReadLine();
-                            }
-                            client.CreateUserStory("Welcome Guests", "Closed", "Logistics", "User Story", assignedTO);
-                            Thread.Sleep(1000);
-                            client.CreateUserStory("Demonstrate Kanban", "Active", "Demonstrations", "User Story", assignedTO);
-                            Thread.Sleep(1000);
-                            client.CreateUserStory("Explain how the Hackathon will work ?", "Active", "Presentation", "User Story", assignedTO);
-                            Thread.Sleep(1000);
-                            client.CreateUserStory("DevOps Overview", "Active", "Presentation", "User Story", assignedTO);
-                            Thread.Sleep(1000);
-                            client.CreateUserStory("Demonstrate APM + Automated Recovery Parts Unlimited App", "New", "Demonstrations", "User Story", assignedTO);
-                            Thread.Sleep(1000);
+                                Thread.Sleep(5000);
+                                Console.WriteLine("------> Do you want to assign the tasks to someone ? Y/N");
+                                string assignatedYorN = Console.ReadLine();
+                                string assignedTO = null;
+                                if (assignatedYorN.ToUpper() == "Y")
+                                {
+                                    Console.WriteLine("### Assign Tasks to :\n Use the correct type like this \"First Name <xxxx@outlook.com>\"\n Example : Julien Stroheker <julien.stroheker@outlook.com>");
+                                    assignedTO = Console.ReadLine();
+                                }
+                                client.CreateUserStory("Welcome Guests", "Closed", "Logistics", "User Story", assignedTO);
+                                Thread.Sleep(1000);
+                                client.CreateUserStory("Demonstrate Kanban", "Active", "Demonstrations", "User Story", assignedTO);
+                                Thread.Sleep(1000);
+                                client.CreateUserStory("Explain how the Hackathon will work ?", "Active", "Presentation", "User Story", assignedTO);
+                                Thread.Sleep(1000);
+                                client.CreateUserStory("DevOps Overview", "Active", "Presentation", "User Story", assignedTO);
+                                Thread.Sleep(1000);
+                                client.CreateUserStory("Demonstrate APM + Automated Recovery Parts Unlimited App", "New", "Demonstrations", "User Story", assignedTO);
+                                Thread.Sleep(1000);
 
-                            client.CreateUserStory("Demonstrate Cloud Based Load Testing + Autoscale policies in IaC", "New", "Demonstrations", "User Story", assignedTO);
-                            Thread.Sleep(1000);
-                            client.CreateUserStory("Demonstrate Infrastructure as Code with Azure Resource Manager Deployment Templates", "New", "Demonstrations", "User Story", assignedTO);
-                            Thread.Sleep(1000);
-                            client.CreateUserStory("Demonstrate Continuous Deployment and Release Management with Visual Studio Team Services", "New", "Demonstrations", "User Story", assignedTO);
-                            Thread.Sleep(1000);
-                            client.CreateUserStory("Demonstrate Continuous Integration with Visual Studio Team Services", "New", "Demonstrations", "User Story", assignedTO);
-                            Thread.Sleep(1000);
+                                client.CreateUserStory("Demonstrate Cloud Based Load Testing + Autoscale policies in IaC", "New", "Demonstrations", "User Story", assignedTO);
+                                Thread.Sleep(1000);
+                                client.CreateUserStory("Demonstrate Infrastructure as Code with Azure Resource Manager Deployment Templates", "New", "Demonstrations", "User Story", assignedTO);
+                                Thread.Sleep(1000);
+                                client.CreateUserStory("Demonstrate Continuous Deployment and Release Management with Visual Studio Team Services", "New", "Demonstrations", "User Story", assignedTO);
+                                Thread.Sleep(1000);
+                                client.CreateUserStory("Demonstrate Continuous Integration with Visual Studio Team Services", "New", "Demonstrations", "User Story", assignedTO);
+                                Thread.Sleep(1000);
 
-                            client.CreateUserStory("Let’s form our teams!", "New", "Let's Hack", "User Story", assignedTO);
-                            Thread.Sleep(1000);
-                            client.CreateUserStory("Activate your Tools", "New", "Let's Hack", "User Story", assignedTO);
-                            Thread.Sleep(1000);
-                            Thread.Sleep(5000);
-                            client.PushStyleConf();
-                            Console.WriteLine("###################################################");
+                                client.CreateUserStory("Let’s form our teams!", "New", "Let's Hack", "User Story", assignedTO);
+                                Thread.Sleep(1000);
+                                client.CreateUserStory("Activate your Tools", "New", "Let's Hack", "User Story", assignedTO);
+                                Thread.Sleep(1000);
+                                Thread.Sleep(5000);
+                                client.PushStyleConf();
+                                Console.WriteLine("###################################################");
 
 
-                            //BuildConf();
-                            //test();
-                            Console.WriteLine("END");
-                            Console.WriteLine("###################################################");
-                            Console.WriteLine("Type any key to close this window...");
-                            Console.ReadKey();
+                                //BuildConf();
+                                //test();
+                                Console.WriteLine("END");
+                                Console.WriteLine("###################################################");
+                                Console.WriteLine("Type any key to close this window...");
+                                Console.ReadKey();
 
-                        }).Wait();
+                            }).Wait();
 
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
             }
         }
         public static async void GetTemplateId()
