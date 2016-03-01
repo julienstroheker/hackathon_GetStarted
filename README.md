@@ -1,4 +1,6 @@
-# hackathon_GetStarted
+# Hackathon_GetStarted Project - VSTS API to automate tasks
+
+[![IMAGE ALT TEXT](http://video.ch9.ms/ch9/37de/4395bf8a-391c-4aff-a66e-54fa702e37de/HackathonGitHubProjectFinal_512.jpg)](https://channel9.msdn.com/Blogs/TalkDevOps/Automate-tasks-on-VSTS-with-API-DevOps-Hackathon-Get-Started-Project/player "Automate tasks on VSTS with API ")
 
 v.0.0.0.0.0.0.0.0.0.0.0.0.0.0.2     ;)
 
