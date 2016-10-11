@@ -33,3 +33,5 @@ Don't hesitate to reach me if you're intereted to help me on that.
 @ju_Stroh
 
 Thanks
+
+[![Analytics](https://ga-beacon.appspot.com/UA-85536321-1/hackathon-GetStarted/readme?pixel)](https://github.com/igrigorik/ga-beacon)
